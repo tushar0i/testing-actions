@@ -1,0 +1,12 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      - PORT=${PORT}
+      - NODE_ENV={NODE_ENV}
+
+    ports:
+      - "${PORT}:${PORT}"
