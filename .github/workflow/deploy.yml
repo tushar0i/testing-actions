@@ -1,0 +1,33 @@
+name: Deploy to infra
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v1.2.5
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          set -e
+          cd ~/testing-actions
+          git fetch origin main
+          git reset --hard origin/main
+          cat > .env <<EOF
+          PORT=${{ secrets.PORT }}
+          NODE_ENV=production
+          EOF
+          docker compose up -d --build --remove-orphans
+
+
